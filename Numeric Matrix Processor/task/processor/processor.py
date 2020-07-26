@@ -119,7 +119,7 @@ def print_new_matrix(mtx):
 
 def transpose(m1):
     """
-    Function to transpose a given matrix
+    Function to transpose a given matrix along the main diagonal
     """
     rows_m1 = len(m1)
     cols_m1 = len(m1[0])
@@ -131,6 +131,49 @@ def transpose(m1):
         for j in range(cols_m1):
             tmp_mtx[j][i] = m1[i][j]
     return tmp_mtx
+
+
+def transpose_side(m1):
+    """
+    Function that transposes a matrix using the side diagonal
+    """
+    rows_m1 = len(m1)
+    cols_m1 = len(m1[0])
+    tmp_mtx = make_matrix(cols_m1, rows_m1, 'zero')
+    for i in range(-1, (-1 - rows_m1), -1):
+        for j in range(-1, (-1 - cols_m1), -1):
+            tmp_mtx[-1 - j][-1 - i] = m1[i][j]
+    return tmp_mtx
+
+
+def transpose_vert(m1):
+    """
+    Function that transposes a matrix using a vertical line
+    """
+    rows_m1 = len(m1)
+    cols_m1 = len(m1[0])
+    if cols_m1 > 1:
+        tmp_mtx = make_matrix(rows_m1, cols_m1, 'zero')
+        for i in range(rows_m1):
+            for j in range(-1, (-1 - cols_m1), -1):
+                tmp_mtx[i][-1 - j] = m1[i][j]
+        return tmp_mtx
+    return m1
+
+
+def transpose_horz(m1):
+    """
+    Function that transposes a matrix using a horizontal line
+    """
+    rows_m1 = len(m1)
+    cols_m1 = len(m1[0])
+    if rows_m1 > 1:
+        tmp_mtx = make_matrix(rows_m1, cols_m1, 'zero')
+        for i in range(-1, (-1 - rows_m1), -1):
+            for j in range(cols_m1):
+                tmp_mtx[-1 - i][j] = m1[i][j]
+        return tmp_mtx
+    return m1
 
 
 def convert_to_int(m1):
@@ -158,12 +201,39 @@ def need_matrices():
     return mtx1, mtx2
 
 
+def run_transpose(func):
+    """
+    Function that takes in 1 of the 4 transpose functions and prints the transposed matrix
+    :param func: transpose, transpose_side, transpose_vert or transpose_horz
+    """
+    r, c = (int(num) for num in input('Enter size of matrix: ').split())
+    mtx = make_matrix(r, c)
+    mtx = func(mtx)
+    print_new_matrix(mtx)
+
+
 def menu():
     """
     Function that delivers a quick menu to the user and returns their choice
     """
-    print('1. Add matrices\n2. Multiply matrix by a constant\n3. Multiply matrices\n0. Exit')
+    print('1. Add matrices\n2. Multiply matrix by a constant\n3. Multiply matrices\n4. Transpose matrix\n0. Exit')
     return input('Your choice: ')
+
+
+def transpose_menu():
+    """
+    Function that delivers the transpose user menu
+    """
+    print('\n1. Main diagonal\n2. Side diagonal\n3. Vertical line\n4. Horizontal line')
+    choice = input('Enter choice: ')
+    if choice == '1':
+        run_transpose(transpose)
+    elif choice == '2':
+        run_transpose(transpose_side)
+    elif choice == '3':
+        run_transpose(transpose_vert)
+    elif choice == '4':
+        run_transpose(transpose_horz)
 
 
 def menu_choice():
@@ -180,6 +250,9 @@ def menu_choice():
             continue
         elif number == '3':
             multiply_em()
+            continue
+        elif number == '4':
+            transpose_menu()
             continue
         elif number == '0':
             exit()
