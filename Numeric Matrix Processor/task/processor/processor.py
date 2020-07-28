@@ -112,8 +112,11 @@ def print_new_matrix(mtx):
     Function that properly prints out a matrix from another function
     """
     print('The result is:')
-    for line in mtx:
-        print(*line)
+    if type(mtx) == list:
+        for line in mtx:
+            print(*line)
+    else:
+        print(mtx)
     print('\r')
 
 
@@ -176,6 +179,65 @@ def transpose_horz(m1):
     return m1
 
 
+def determinant(m1):
+    """
+    Function to calculate the determinant of a matrix
+    :param m1: the matrix in which you want to find the determinant
+    :return: the determinant of the matrix
+    """
+    if len(m1) == 1:  # base case if matrix has only 1 number
+        return m1
+    elif test_square_matrix(m1):
+        if len(m1) == 2:  # base case
+            return m1[0][0] * m1[1][1] - m1[0][1] * m1[1][0]
+        cols_m = len(m1[0])
+        new_m = m1[0]
+        del m1[0]
+        new_mtx = [find_new_matrix(m1, i) for i in range(cols_m)]
+        total = 0
+        for i in range(len(new_m)):
+            total += new_m[i] * ((-1) ** (i + 2)) * (determinant(new_mtx[i]))
+        return total
+    else:
+        return 'The matrix is not square'
+
+
+def find_new_matrix(mtx, col):
+    """
+    Function to remove columns from a matrix
+    :param mtx: the matrix to perform the action
+    :param col: the column to omit from the new matrix
+    :return: the minor of the given matrix
+    """
+    rows = len(mtx)
+    new = []
+    while len(new) < rows:
+        new.append([])
+    for i in range(len(mtx)):
+        for j in range(len(mtx[0])):
+            if j == col:
+                continue
+            else:
+                new[i].append(mtx[i][j])
+    return new
+
+
+def test_square_matrix(mtx):
+    """
+    Function that checks if a matrix is square before performing a calculation
+    :param mtx: the matrix to test
+    :return: True or False
+    """
+    rows_m = len(mtx)
+    for i in range(rows_m):  # test to see if the matrix is square
+        if len(mtx[i]) == rows_m:
+            continue
+        else:
+            print("This is not a square matrix")
+            return False
+    return True
+
+
 def convert_to_int(m1):
     """
     Function that checks user input to see if it really is type int or not because the
@@ -201,7 +263,7 @@ def need_matrices():
     return mtx1, mtx2
 
 
-def run_transpose(func):
+def run_operation(func):
     """
     Function that takes in 1 of the 4 transpose functions and prints the transposed matrix
     :param func: transpose, transpose_side, transpose_vert or transpose_horz
@@ -216,7 +278,8 @@ def menu():
     """
     Function that delivers a quick menu to the user and returns their choice
     """
-    print('1. Add matrices\n2. Multiply matrix by a constant\n3. Multiply matrices\n4. Transpose matrix\n0. Exit')
+    print('1. Add matrices\n2. Multiply matrix by a constant\n3. Multiply matrices\n4. Transpose matrix\n'
+          '5. Calculate a determinant\n0. Exit')
     return input('Your choice: ')
 
 
@@ -227,13 +290,13 @@ def transpose_menu():
     print('\n1. Main diagonal\n2. Side diagonal\n3. Vertical line\n4. Horizontal line')
     choice = input('Enter choice: ')
     if choice == '1':
-        run_transpose(transpose)
+        run_operation(transpose)
     elif choice == '2':
-        run_transpose(transpose_side)
+        run_operation(transpose_side)
     elif choice == '3':
-        run_transpose(transpose_vert)
+        run_operation(transpose_vert)
     elif choice == '4':
-        run_transpose(transpose_horz)
+        run_operation(transpose_horz)
 
 
 def menu_choice():
@@ -254,6 +317,8 @@ def menu_choice():
         elif number == '4':
             transpose_menu()
             continue
+        elif number == '5':
+            run_operation(determinant)
         elif number == '0':
             exit()
         else:
